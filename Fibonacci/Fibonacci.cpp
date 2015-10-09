@@ -1,9 +1,7 @@
 // Fibonacci.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 #include "Integer.h"
-#include <chrono>
 #include <iostream>
 
 using namespace std;
