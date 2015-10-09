@@ -8,10 +8,14 @@ using namespace std;
 
 const char *FILENAME = "fibonacci.txt";
 
+/* Calculate the nth fibonacci number using a simple
+ * iterative approach
+ */
 Integer fibonacci( int n )
 {
 	if ( n < 2 )
 		return Integer(n);
+
 	Integer a, b( 1 ), c;
 	for ( int i = 1; i < n; i++ )
 	{
@@ -19,11 +23,12 @@ Integer fibonacci( int n )
 		a = b;
 		b = c;
 		if ( i % 10000 == 0 )
-			printf( "in fibonacci(%i)...\r", i );
+			printf( "in fibonacci(%i)...\r", i ); // display progress
 	}
 	return c;
 }
 
+// ask user for input, negative stops execution.
 void input()
 {
 	printf( "get the nth fibonacci number:\nn> " );
@@ -33,11 +38,12 @@ void input()
 	if ( n < 0 )
 		return;
 	Integer f = fibonacci( n );
-	f.print();
-	f.toFile( FILENAME );
+	f.print();	// print result
+	f.toFile( FILENAME );	// save result to file, as it can be huge
 	input();
 }
 
+// display usage
 void help()
 {
 	cerr 
@@ -53,6 +59,7 @@ int main(int argc, char * argv[])
 	else
 	{
 		string arg1( argv[1] );
+		/* Calc. single value of fibonacci */
 		if ( (arg1 == "-v" || arg1 == "--value") && argc == 3 )
 		{
 			Integer fi = fibonacci( atoi( argv[2] ) );
@@ -60,6 +67,7 @@ int main(int argc, char * argv[])
 			fi.toFile( FILENAME );
 		}
 
+		/* Display a range of values */
 		else if ( (arg1 == "-r" || arg1 == "--range") && argc == 4 && atoi(argv[2]) <= atoi(argv[3]))
 		{
 			for ( int i = atoi( argv[2] ); i < atoi( argv[3] ); i++ )
