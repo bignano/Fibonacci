@@ -67,6 +67,11 @@ Integer Integer::operator*( int n )
 	return result;
 }
 
+bool Integer::operator==( const Integer &other )
+{
+	return m_number == other.m_number;
+}
+
 std::string Integer::padString( const std::string &src, int l )
 {
 	string pad = src;
@@ -77,22 +82,24 @@ std::string Integer::padString( const std::string &src, int l )
 
 string Integer::toString()
 {
+	if ( !m_string.empty() ) return m_string;
+
 	int lastItemIdx = (int)(m_number.size() - 1);
 
 	// don't pad the left-most number block
-	string s = to_string( m_number[lastItemIdx] );
+	m_string = to_string( m_number[lastItemIdx] );
 
 	// pad all the rest 
 	if ( lastItemIdx > 0 )
 		for ( int i = lastItemIdx - 1; i >= 0; i-- )
-			s = s.append( padString( to_string( m_number[i] ), 18 ) );
+			m_string = m_string.append( padString( to_string( m_number[i] ), 18 ) );
 
-	return s;
+	return m_string;
 }
 
-void Integer::print(const string &prefix)
+void Integer::print(const string &prefix )
 {
-	printf( "%s%s\n", prefix.c_str(), toString().c_str() );
+	printf( "%s%s\t(%zu)\n", prefix.c_str(), toString().c_str(), toString().length() );
 }
 
 void Integer::toFile( const string &filename )

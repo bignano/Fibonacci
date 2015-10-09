@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+// 64-bit signed integer for human input (that may be negative)
+typedef int64_t i64;
 // 64-bit unsigned integer, single number block
 typedef uint64_t u64;
 // vector of number blocks
@@ -36,12 +38,13 @@ public:
 
 	Integer operator+( const Integer &other );
 	Integer operator*( int n );
+	bool operator==( const Integer &other );
 
 	/* Get the representation of the number as string*/
 	std::string toString();
 
-	/* Print the number to console, prepending the given string */
-	void print(const std::string &prefix="");
+	/* Print the number to console, prepending and appending the given strings */
+	void print( const std::string &prefix = "" );
 
 	/* Save the number to a file */
 	void toFile( const std::string &filename );
@@ -49,7 +52,8 @@ public:
 private:
 
 	vu64 m_number;
-	
+	std::string m_string;
+
 	/* Private constructor used to */
 	Integer(vu64 number, u64 carry);
 
