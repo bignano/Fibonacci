@@ -5,24 +5,46 @@ using namespace std;
 
 Integer::Integer()
 {
-	Integer( 0 );
+	// single block with value 0
+	m_number = new u64[2];
+	m_number[0] = 0;
+	m_number[1] = 1;
+	m_size = 1;
+	//owner = true;
 }
 
 Integer::Integer( u64 n )
 {	
 	// single block with value n 
-	m_number = vu64( { n } );
+	m_number = new u64[2];
+	m_number[0] = n;
+	m_number[1] = 1;
+	m_size = 1;
+	//owner = true;
 }
 
-Integer::Integer( vu64 number, u64 carry )
+Integer::Integer( const Integer& src )
+{
+	m_number = src.m_number;
+	m_size = src.m_size;
+	m_number[m_size]++;
+	//owner = false;
+}
+
+Integer::Integer( u64* number, i64 size )
 {
 	m_number = number;
-	if ( carry != 0 )	// carry = 0 means no carry
-		m_number.push_back(carry);
+	m_size = size;
+	m_number[m_size] = 1;
+	//owner = true;
 }
 
 Integer::~Integer()
-{}
+{
+//	if ( owner ) delete[] m_number;
+	if ( --m_number[m_size] == 0 )
+		delete[] m_number;
+}
 
 Integer Integer::operator+( const Integer &other )
 {
@@ -30,23 +52,22 @@ Integer Integer::operator+( const Integer &other )
 	const u64 dig = 1000000000000000000;
 
 	/* find which number is longer and which is shorter */
-	const vu64 &max = m_number.size() > other.m_number.size() ? m_number : other.m_number;
-	const vu64 &min = m_number.size() > other.m_number.size() ? other.m_number : m_number;
+	const Integer& max = m_size > other.m_size ? (*this) : other;
+	const Integer& min = m_size > other.m_size ? other : (*this);
 
-	u64 carry = 0; 
+	u64 carry = 0;
 
-	// pre-allocate for speed
-	vu64 next = vu64( max.size() );
+	u64* next = new u64[max.m_size + 2];
 
 	// iterate through all number blocks and adding,
 	// with carrying the 19th digit
-	for ( size_t i = 0; i < max.size(); i++ )
+	for ( i64 i = 0; i < max.m_size; i++ )
 	{
-		u64 result = max[i] + carry;
+		u64 result = max.m_number[i] + carry;
 
 		// to prevent out-of-bounds
-		if ( i < min.size() )
-			result += min[i];
+		if ( i < min.m_size )
+			result += min.m_number[i];
 
 		// keep the 19th digit
 		carry = result / dig;
@@ -55,7 +76,12 @@ Integer Integer::operator+( const Integer &other )
 		next[i] = result - carry * dig;
 	}
 
-	return Integer( next, carry );
+	if ( carry != 0 )
+	{
+		next[max.m_size] = carry;
+		return Integer( next, max.m_size + 1 );
+	}
+	else return Integer( next, max.m_size );
 }
 
 Integer Integer::operator*( int n )
@@ -65,6 +91,17 @@ Integer Integer::operator*( int n )
 	for ( int i = 0; i < n; i++ )
 		result = result + (*this);
 	return result;
+}
+
+Integer& Integer::operator=( const Integer &src )
+{
+	if ( --m_number[m_size] == 0 )
+		delete[] m_number;
+	m_number = src.m_number;
+	m_size = src.m_size;
+	//owner = false;
+	m_number[m_size]++;
+	return *this;
 }
 
 bool Integer::operator==( const Integer &other )
@@ -82,9 +119,9 @@ std::string Integer::padString( const std::string &src, int l )
 
 string Integer::toString()
 {
-	if ( !m_string.empty() ) return m_string;
+	//if ( !m_string.empty() ) return m_string;
 
-	int lastItemIdx = (int)(m_number.size() - 1);
+	int lastItemIdx = (int)(m_size - 1);
 
 	// don't pad the left-most number block
 	m_string = to_string( m_number[lastItemIdx] );

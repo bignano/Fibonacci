@@ -32,12 +32,15 @@ public:
 	/* Represent n as Integer*/
 	Integer( u64 n );
 	
+	Integer( const Integer& src );
+
 	~Integer();
 
 	/* Operator overloading, add and multiply only */
 
 	Integer operator+( const Integer &other );
 	Integer operator*( int n );
+	Integer& operator=( const Integer &src );
 	bool operator==( const Integer &other );
 
 	/* Get the representation of the number as string*/
@@ -51,11 +54,13 @@ public:
 
 private:
 
-	vu64 m_number;
+	u64*  m_number;
+	i64 m_size;
 	std::string m_string;
+	//bool owner;
 
 	/* Private constructor used to */
-	Integer(vu64 number, u64 carry);
+	Integer(u64* number, i64 size);
 
 	/* Prepend zeros to string up to length l */
 	static std::string padString( const std::string &src, int l );

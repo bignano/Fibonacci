@@ -57,7 +57,7 @@ void input()
 	if ( benchmark )
 	{
 		chrono::duration<i64, nano> time = end - start;
-		printf( "mode: %s | time: %lli ms", mode.c_str(), time.count()/ 1000000);
+		printf( "mode: %s | time: %lli ns", mode.c_str(), time.count() );
 	}
 	cout << endl;
 	input();
